@@ -27,7 +27,6 @@ export const EventsPage = () => {
     });
   };
 
-  // De zeef (filter) logica
   const matchedEvents = events.filter((event) => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategories.length === 0 || 
@@ -37,25 +36,29 @@ export const EventsPage = () => {
   });
 
   return (
-    <Box p={8}>
+    <Box p={8} bg="white" color="black" minH="100vh">
       <Heading mb={6}>Alle Evenementen</Heading>
       
-      {/* Zoekbalk */}
       <Input 
         placeholder="Zoek op titel van een evenement..." 
         mb={4} 
         size="lg"
         bg="white"
+        color="black"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)} 
       />
 
-      {/* Categorie Filters */}
       <Box mb={8} p={4} bg="gray.50" borderRadius="md" borderWidth="1px">
-        <Text fontWeight="bold" mb={2}>Filter op categorie:</Text>
+        <Text fontWeight="bold" mb={2} color="black">
+          Filter op categorie:
+        </Text>
         <Flex wrap="wrap" gap={4}>
           {categories.map(category => (
-            <label key={category.id} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+            <label 
+              key={category.id} 
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: 'black' }}
+            >
               <input 
                 type="checkbox" 
                 checked={selectedCategories.includes(category.id)}
@@ -67,10 +70,10 @@ export const EventsPage = () => {
         </Flex>
       </Box>
 
-      {/* De Grid met resultaten (of Skeletons) */}
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
         {loading ? (
-          [1, 2, 3, 4, 5, 6].map((item) => (
+          /* Hier staan nu netjes 9 Skeletons! */
+          [1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => (
             <Box key={item} p={4} borderWidth="1px" borderRadius="lg" bg="white">
               <Skeleton height="200px" borderRadius="md" mb={4} />
               <Skeleton height="20px" width="70%" mb={2} />
@@ -89,19 +92,38 @@ export const EventsPage = () => {
                 _hover={{ transform: 'scale(1.02)', transition: '0.2s' }} 
                 height="100%"
               >
-                <Image src={event.image} alt={event.title} height="200px" width="100%" objectFit="cover" />
+                <Image 
+                  src={event.image} 
+                  alt={event.title} 
+                  height="200px" 
+                  width="100%" 
+                  objectFit="cover" 
+                />
                 <Box p={4}>
-                  <Heading size="md" mb={2}>{event.title}</Heading>
+                  <Heading size="md" mb={2} color="black">{event.title}</Heading>
                   <Text noOfLines={2} color="gray.600" mb={3}>{event.description}</Text>
                   
-                  <Text fontSize="xs" color="gray.500"><strong>Start:</strong> {formatTime(event.startTime)}</Text>
-                  <Text fontSize="xs" color="gray.500" mb={3}><strong>Eind:</strong> {formatTime(event.endTime)}</Text>
+                  <Text fontSize="xs" color="gray.500">
+                    <strong>Start:</strong> {formatTime(event.startTime)}
+                  </Text>
+                  <Text fontSize="xs" color="gray.500" mb={3}>
+                    <strong>Eind:</strong> {formatTime(event.endTime)}
+                  </Text>
 
                   <Flex gap={2} wrap="wrap">
                     {event.categoryIds.map((categoryId) => {
                       const category = categories.find((c) => c.id == categoryId);
                       return category ? (
-                        <Box key={category.id} bg="teal.100" color="teal.800" px={2} py={1} borderRadius="md" fontSize="xs" fontWeight="bold">
+                        <Box 
+                          key={category.id} 
+                          bg="teal.100" 
+                          color="teal.800" 
+                          px={2} 
+                          py={1} 
+                          borderRadius="md" 
+                          fontSize="xs" 
+                          fontWeight="bold"
+                        >
                           {category.name}
                         </Box>
                       ) : null;
@@ -114,9 +136,11 @@ export const EventsPage = () => {
         )}
       </SimpleGrid>
 
-      {/* Melding als er niks gevonden is */}
+      {/* Melding als er niks gevonden is (ook een specifiek feedbackpuntje!) */}
       {!loading && matchedEvents.length === 0 && (
-        <Text color="gray.500" mt={4}>Geen evenementen gevonden met deze filters...</Text>
+        <Text color="gray.500" mt={4}>
+          Geen evenementen gevonden met deze filters...
+        </Text>
       )}
     </Box>
   );
