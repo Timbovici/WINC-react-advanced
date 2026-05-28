@@ -18,19 +18,24 @@ export const EventsPage = () => {
   };
 
   const handleCategoryToggle = (categoryId) => {
+    const numId = Number(categoryId); 
     setSelectedCategories((prev) => {
-      if (prev.includes(categoryId)) {
-        return prev.filter(id => id !== categoryId);
+      if (prev.includes(numId)) {
+        return prev.filter(id => id !== numId);
       } else {
-        return [...prev, categoryId];
+        return [...prev, numId];
       }
     });
   };
 
   const matchedEvents = events.filter((event) => {
     const matchesSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Zorg dat we arrays van nummers vergelijken om de "games" bug te voorkomen
     const matchesCategory = selectedCategories.length === 0 || 
-      selectedCategories.some(categoryId => event.categoryIds.includes(categoryId));
+      selectedCategories.some(selectedId => 
+        event.categoryIds.map(id => Number(id)).includes(selectedId)
+      );
 
     return matchesSearch && matchesCategory;
   });
@@ -53,31 +58,48 @@ export const EventsPage = () => {
         <Text fontWeight="bold" mb={2} color="black">
           Filter op categorie:
         </Text>
-        <Flex wrap="wrap" gap={4}>
-          {categories.map(category => (
-            <label 
-              key={category.id} 
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: 'black' }}
-            >
-              <input 
-                type="checkbox" 
-                checked={selectedCategories.includes(category.id)}
-                onChange={() => handleCategoryToggle(category.id)} 
-              />
-              {category.name}
-            </label>
-          ))}
-        </Flex>
+        
+      {loading ? (
+          <Flex wrap="wrap" gap={4}>
+            <Skeleton height="24px" width="75px" />  {/* Voor: [v] sports */}
+            <Skeleton height="24px" width="75px" />  {/* Voor: [v] games */}
+            <Skeleton height="24px" width="110px" /> {/* Voor: [v] relaxation (langste woord) */}
+            <Skeleton height="24px" width="70px" />  {/* Voor: [v] music */}
+          </Flex>
+        ) : (
+          <Flex wrap="wrap" gap={4}>
+            {categories.map(category => (
+              <label 
+                key={category.id} 
+                style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: 'black' }}
+              >
+                <input 
+                  type="checkbox" 
+                  checked={selectedCategories.includes(Number(category.id))}
+                  onChange={() => handleCategoryToggle(category.id)} 
+                />
+                {category.name}
+              </label>
+            ))}
+          </Flex>
+        )}
       </Box>
 
       <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
         {loading ? (
-          /* Hier staan nu netjes 9 Skeletons! */
           [1, 2, 3, 4, 5, 6, 7, 8, 9].map((item) => (
-            <Box key={item} p={4} borderWidth="1px" borderRadius="lg" bg="white">
-              <Skeleton height="200px" borderRadius="md" mb={4} />
-              <Skeleton height="20px" width="70%" mb={2} />
-              <SkeletonText noOfLines={3} spacing="4" />
+            <Box key={item} borderWidth="1px" borderRadius="lg" overflow="hidden" shadow="md" bg="white" height="100%">
+              <Skeleton height="200px" width="100%" />
+              <Box p={4}>
+                <Skeleton height="24px" width="60%" mb={2} />
+                <SkeletonText noOfLines={2} spacing="4" mb={3} />
+                <Skeleton height="16px" width="40%" mb={1} />
+                <Skeleton height="16px" width="40%" mb={3} />
+                <Flex gap={2} wrap="wrap">
+                  <Skeleton height="24px" width="60px" borderRadius="md" />
+                  <Skeleton height="24px" width="80px" borderRadius="md" />
+                </Flex>
+              </Box>
             </Box>
           ))
         ) : (
@@ -112,7 +134,7 @@ export const EventsPage = () => {
 
                   <Flex gap={2} wrap="wrap">
                     {event.categoryIds.map((categoryId) => {
-                      const category = categories.find((c) => c.id == categoryId);
+                      const category = categories.find((c) => Number(c.id) === Number(categoryId));
                       return category ? (
                         <Box 
                           key={category.id} 
@@ -136,7 +158,6 @@ export const EventsPage = () => {
         )}
       </SimpleGrid>
 
-      {/* Melding als er niks gevonden is (ook een specifiek feedbackpuntje!) */}
       {!loading && matchedEvents.length === 0 && (
         <Text color="gray.500" mt={4}>
           Geen evenementen gevonden met deze filters...

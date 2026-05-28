@@ -14,14 +14,23 @@ export const EventPage = () => {
 
   const event = events.find((e) => e.id == eventId);
 
-  // De skeletons voor het laden
   if (loading || !event) {
     return (
-      <Box p={8} maxW="800px" mx="auto">
-        <Skeleton height="40px" width="150px" mb={4} />
-        <Skeleton height="300px" borderRadius="lg" mb={6} />
-        <Skeleton height="40px" width="70%" mb={4} />
-        <SkeletonText mt="4" noOfLines={4} spacing="4" />
+      <Box p={8} maxW="800px" mx="auto" bg="white" color="black" borderRadius="md">
+        <Skeleton height="40px" width="200px" mb={4} /> 
+        <Skeleton height="300px" w="100%" borderRadius="lg" mb={6} /> 
+        <Skeleton height="32px" width="50%" mb={4} /> 
+        <SkeletonText mt="4" noOfLines={3} spacing="4" mb={6} /> 
+        <Skeleton height="120px" w="100%" borderRadius="md" mb={6} /> 
+        <Skeleton height="24px" width="120px" mb={2} /> 
+        <Flex gap={2} mb={6}>
+          <Skeleton height="32px" width="80px" borderRadius="md" />
+          <Skeleton height="32px" width="100px" borderRadius="md" />
+        </Flex>
+        <Flex gap={4}>
+          <Skeleton height="40px" width="120px" borderRadius="md" />
+          <Skeleton height="40px" width="120px" borderRadius="md" />
+        </Flex>
       </Box>
     );
   }
